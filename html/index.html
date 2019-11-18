@@ -1,0 +1,217 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+<script src="jquery-3.4.1.js"></script>
+<script> 
+
+ const PageMonth 		= 0;
+ const PageDayOfMonth 	= 1;
+ const PageChecksPerDay	= 2;
+
+ CurrentPage = PageMonth;
+ var LoadChecksPerDayParm = '';
+ var LoadDayOfMonthParam = '';
+ 
+function LoadChecksPerDay(Param)
+ {
+	LoadChecksPerDayParm=Param;
+	$(".ErrorCaption").text('Загрузка...');
+	Loadfile="checksperday.php?"+Param;
+	$("#panel").load(Loadfile, function(responseTxt, statusTxt, xhr)
+	{
+		if(statusTxt == "success")
+		{
+			$(".ErrorCaption").text("Загружен '"+Loadfile+"': " + xhr.status + ": " + xhr.statusText);
+			$(".ErrorCaption").css('color', 'Green');
+			$(".ErrorCaption").show();
+			$(".BackToMonth").show();
+			$(".BackToDayOfMonth").show();
+			$("#SelectYear").hide();
+			$("#SelectYearText").hide();
+			$("#flip_bottom").show();
+   		    CurrentPage = PageChecksPerDay;
+			$(document).ready(function(){
+//				$(".CheckGoods").click(function(){$(".ErrorCaption").text('ID: '+$(this).attr('tag'))});
+				$(".CheckGoods").click(function(){
+					IDTR='#'+$(this).attr('tag');
+					$(".ErrorCaption").text('Show TR: '+IDTR);
+					$(IDTR).toggle(300)
+//					$("#"+(this).attr('tag')).toggle()
+				});
+			});
+		};
+		if(statusTxt == "error")
+		{
+			$(".ErrorCaption").text("Ошибка загрузки '"+Loadfile+"': " + xhr.status + ": " + xhr.statusText);
+			$(".ErrorCaption").show();
+		};
+	});
+ };
+ 
+ function LoadDayOfMonth(Param)
+ {
+	LoadDayOfMonthParam=Param;
+	$(".ErrorCaption").text('Загрузка...');
+	Loadfile="dayofmonth.php?"+Param;
+	$("#panel").load(Loadfile, function(responseTxt, statusTxt, xhr)
+	{
+		if(statusTxt == "success")
+		{
+			$(".ErrorCaption").text("Загружен '"+Loadfile+"': " + xhr.status + ": " + xhr.statusText);
+			$(".ErrorCaption").css('color', 'Green');
+			$(".ErrorCaption").show();
+			$(".BackToMonth").show();
+			$(".BackToDayOfMonth").hide();
+			$("#SelectYear").hide();
+			$("#SelectYearText").hide();
+			$("#flip_bottom").show();
+			CurrentPage = PageDayOfMonth;
+			$(document).ready(function(){
+				$(".Cell").click(function(){
+					$(".ErrorCaption").text('ID: '+$(this).attr('tag'))
+					LoadChecksPerDay($(this).attr('tag'));
+				});
+			});
+		};
+		if(statusTxt == "error")
+		{
+			$(".ErrorCaption").text("Ошибка загрузки '"+Loadfile+"': " + xhr.status + ": " + xhr.statusText);
+			$(".ErrorCaption").show();
+		};
+	});
+ };
+
+ function LoadMonth()
+ {
+	$(".ErrorCaption").css('color', 'Green');
+	$(".ErrorCaption").text('Загрузка...');
+	$Year=$("#SelectYear").val();
+	Loadfile="month.php?y="+$Year;
+	CurrentDoc=Loadfile;
+	$("#panel").load(Loadfile, function(responseTxt, statusTxt, xhr)
+	{
+		if(statusTxt == "success")
+		{
+			$(".ErrorCaption").text("Загружен '"+Loadfile+"': " + xhr.status + ": " + xhr.statusText);
+			$(".ErrorCaption").css('color', 'Green');
+			$(".ErrorCaption").show();
+			$(".BackToMonth").hide();
+			$(".BackToDayOfMonth").hide();
+			$("#SelectYear").show();
+			$("#SelectYearText").show();
+			$("#flip_bottom").show();
+			CurrentPage = PageMonth;
+			$(document).ready(function(){
+			    $(".Cell").click(function(){
+					$(".ErrorCaption").text('param: '+$(this).attr('tag'));
+					LoadDayOfMonth($(this).attr('tag'));
+				});
+			});
+	
+		};
+		if(statusTxt == "error")
+		{
+			$(".ErrorCaption").text("Ошибка загрузки '"+Loadfile+"': " + xhr.status + ": " + xhr.statusText);
+			$(".ErrorCaption").show();
+		};
+	});
+ };
+
+function RefreshTable()
+{
+    $(".ErrorCaption").text('!!!'+CurrentPage);
+	$(".ErrorCaption").show();
+//	exit;
+	switch (CurrentPage)
+	{
+		case PageDayOfMonth		: LoadDayOfMonth(LoadDayOfMonthParam); break;
+		case PageChecksPerDay	: LoadChecksPerDay(LoadChecksPerDayParm); break;
+		default:LoadMonth(); 
+	};
+};
+
+ $(document).ready(function(){
+//    $("#Refresh").click(function(){LoadMonth()});
+    $(".Refresh").click(function(){RefreshTable()});
+    $(".BackToMonth").click(function(){LoadMonth()});
+    $(".BackToDayOfMonth").click(function(){LoadDayOfMonth(LoadDayOfMonthParam)});
+//    $("#Cell_2_2_1").click(function(){alert($(this).text)});
+	$(".ErrorCaption").hide();
+	$(".ErrorCaption").hide();
+//	$("#Back").hide();
+});
+
+</script>
+ 
+<style>
+body {font-family:Arial; background-color:white;}
+
+.flip {
+    padding: 5px;
+    text-align: center;
+    background-color: #e5eecc;
+    border: solid 1px #c3c3c3;
+	font-family:Arial;
+}
+
+#panel {
+    padding: 5px;
+    text-align: center;
+    background-color: #e6ffff;
+    border: solid 1px #c3c3c3;
+	font-family:Arial;
+}
+
+.ErrorCaption{
+	font-size:12px;
+	color:Red;
+}
+
+#panel {
+    padding: 50px;
+}
+
+.Refresh, .BackToMonth, .BackToDayOfMonth {
+	height:30px;
+    text-align: center;
+	vertical-align: middle;
+}
+
+</style>
+</head>
+<body>
+ 
+<div id="flip" class="flip"><P>Docker версия.</P><H3>Шахматка, данные продаж касс, магазинов.</H3>
+	<Text id="SelectYearText">выберите год:</Text>
+    <select id="SelectYear">
+		<option value=2015>2015</option>
+		<option value=2016>2016</option>
+		<option value=2017>2017</option>
+		<option value=2018>2018</option>
+		<option selected value=2019>2019</option>
+		<option value=2020>2020</option>
+		<option value=2021>2021</option>
+	</select>
+
+	<input class="Refresh" type="button" value=" обновить "> </input>
+	<input class="BackToMonth"  type="button" style="display:none;" value=" назад в мес"> </input>
+	<input class="BackToDayOfMonth"  type="button" style="display:none;" value=" назад в день месяца"> </input>
+	<p class="ErrorCaption">Ошибка!</p>
+<!--	<P Align=Left><a target="_blank" href="http://151.80.14.150:15672/">RabbitMQ Admin</a></P>	-->
+</div>
+<div id="panel">тут будет таблица шахматки, нажмите "Обновить"</div>
+
+<div id="flip_bottom" class="flip" style="display:none;">
+	<BR>
+	<p class="ErrorCaption">Ошибка!</p>
+	<input class="Refresh" type="button" value=" обновить "> </input>
+	<input class="BackToMonth" type="button" style="display:none;" value=" назад в мес"> </input>
+	<input class="BackToDayOfMonth"  type="button" style="display:none;" value=" назад в день месяца"> </input>
+<!--	<p id="TestP1" class="aaa" tag="aaabbbccc">Hello World!</p>
+	<p id="TestP2" class="aaa">Hello Hello Hello !</p>-->
+	<BR> 
+	<BR>
+</div>
+</body>
+</html>

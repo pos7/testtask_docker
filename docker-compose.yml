@@ -1,0 +1,45 @@
+version: '3.3'
+services:
+    db:
+#       container_name: MongoDB  !!! если большие буквы здесь, то работать не будет !!!
+        container_name: mongodb
+        image: mongo
+ #       ports: 
+ #         - 27000:27017
+        restart: always
+        environment:
+           MONGO_INITDB_ROOT_USERNAME: root
+           MONGO_INITDB_ROOT_PASSWORD: secret
+
+    mq:
+        container_name: RabbitMQ
+        image: rabbitmq:3.8.1-management
+#        ports: 
+#          - 15000:15672
+        restart: always
+        environment:
+           RABBITMQ_DEFAULT_USER: root
+           RABBITMQ_DEFAULT_PASS: secret
+
+    cli:
+        container_name: Consumer
+        build: 
+            context: .
+            dockerfile: dockerfile_phpcli
+        links:
+          - db
+          - mq
+        hostname: Consumer
+
+    wb:
+        container_name: PHP_Apache
+        build: 
+            context: .
+            dockerfile: dockerfile_phpapache
+        ports:
+          -  8080:80
+        links:
+          - db
+          - mq
+        hostname: DocMachine
+          

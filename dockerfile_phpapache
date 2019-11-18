@@ -1,0 +1,26 @@
+FROM php:7.2-apache
+
+MAINTAINER pos7 <pos7@mail.ru>
+
+COPY /html/*.* ./
+
+RUN  apt-get update \
+   && apt-get install -y telnet htop mc iputils-ping net-tools librabbitmq-dev \
+   && a2enmod rewrite \
+   && pecl install mongodb \
+   && docker-php-ext-enable mongodb \
+   && pecl install \
+       amqp \
+   && docker-php-ext-enable amqp \
+   && docker-php-ext-install \
+       bcmath \
+       sockets \
+       pcntl \
+  && curl -sS https://getcomposer.org/installer -o composer-setup.php \
+  && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+  && composer require mongodb/mongodb \
+  && composer install 
+
+EXPOSE 80
+
+#CMD ["php","cash.php"]
