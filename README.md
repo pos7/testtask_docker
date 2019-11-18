@@ -6,7 +6,7 @@
 Для запуска нам потребуется Docker, Docker-compose
 
 Файлы: 
-* ```start.sh``` - старт "пакета" под линуксом, либо с команднйо строки ```docker-compose up --build```
+* ```start.sh``` - старт "пакета" под линуксом, либо с командной строки ```docker-compose up --build```
 * ```del.sh``` - удаление всех контейнеров и образов "чистка", либо 
 ```
 docker rm -v $(docker ps -aq -f status=exited) 
